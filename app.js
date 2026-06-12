@@ -561,8 +561,8 @@ function setupAudio() {
   // Однократный разблокировщик для iOS Safari при первом таче / клике на странице
   const unlockAudioOnFirstTouch = () => {
     initAudioCtx();
-    if (bgMusic) {
-      bgMusic.load();
+    if (bgMusic && !isMusicPlaying) {
+      try { bgMusic.load(); } catch (e) {}
     }
     document.removeEventListener('touchstart', unlockAudioOnFirstTouch);
     document.removeEventListener('click', unlockAudioOnFirstTouch);
