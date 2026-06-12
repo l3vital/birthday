@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Приглашение на 1-й день рождения Марселя 🦒</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Involve"', 'sans-serif'],
+            sans: ['"Nunito"', 'sans-serif'],
+          },
+          colors: {
+            safari: {
+              bg: '#FFFDF0',
+              text: '#4E3B31',
+              gold: '#F3A800',
+              sage: '#5B995A',
+              terracotta: '#FF8C00',
+              sand: '#F8F17F',
+              darkSage: '#2B2A22',
+              neutral: '#4E3B31',
+              forest: '#0A2A25'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    /* Подключение локального шрифта Involve */
+    @font-face {
+      font-family: 'Involve';
+      src: url('assets/fonts/Involve-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Involve';
+      src: url('assets/fonts/Involve-Medium.ttf') format('truetype');
+      font-weight: 500;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Involve';
+      src: url('assets/fonts/Involve-SemiBold.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Involve';
+      src: url('assets/fonts/Involve-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    /* Эффект бумаги для фона */
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+    body {
+      background: radial-gradient(circle, #2C4C24 0%, #12210E 100%);
+      color: #4E3B31;
+      perspective: 1200px;
+    }
+    .paper-overlay {
+      background-image: url('assets/paper_background.webp');
+      mix-blend-mode: multiply;
+      opacity: 0.22;
+    }
+
+    /* Кастомная плавная пульсация от 40% до 100% */
+    @keyframes custom-pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+    .animate-custom-pulse {
+      animation: custom-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* АНИМАЦИИ НА БАЗЕ INTERSECTION OBSERVER */
+    .slide-fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .active .slide-fade-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-zoom-in {
+      opacity: 0;
+      transform: scale(0.93) translateY(10px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .active .slide-zoom-in {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    
+    .slide-pop-in {
+      opacity: 0;
+      transform: scale(0.82) translateY(55px);
+      transition: opacity 0.9s cubic-bezier(0.34, 1.75, 0.6, 1.05), transform 0.9s cubic-bezier(0.34, 1.75, 0.6, 1.05);
+      will-change: opacity, transform;
+    }
+    .active .slide-pop-in {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    
+    /* Задержки анимации элементов (Stagger) */
+    .delay-75 { transition-delay: 75ms; }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-150 { transition-delay: 150ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .delay-400 { transition-delay: 400ms; }
+    .delay-500 { transition-delay: 500ms; }
+
+    /* --- РЕАЛИСТИЧНЫЙ CSS-КОНВЕРТ С 3D FLIP --- */
+    #envelope-cover {
+      transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      backface-visibility: hidden;
+      background: linear-gradient(180deg, #FFFDF0 0%, #FFE97F 40%, #D2F1B0 75%, #9CE37D 100%);
+    }
+    #envelope-cover.flipped {
+      transform: rotateY(180deg) scale(0.8);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #scroll-container {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+      background: linear-gradient(180deg, #FFFDF0 0%, #FFE97F 40%, #D2F1B0 75%, #9CE37D 100%);
+      transform: rotateY(-180deg) scale(0.8);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      backface-visibility: hidden;
+      contain: paint;
+    }
+    #scroll-container.flipped {
+      transform: rotateY(0deg) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #scroll-container::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
+
+    /* Тени от листвы (Gobo-эффект) */
+    .gobo-overlay {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 28; /* Накладывается поверх контента для реалистичности */
+      mix-blend-mode: multiply;
+      background-image: 
+        radial-gradient(circle at 95% 5%, rgba(42, 54, 33, 0.09) 0%, rgba(0, 0, 0, 0) 50%),
+        radial-gradient(circle at 5% 45%, rgba(42, 54, 33, 0.07) 0%, rgba(0, 0, 0, 0) 40%),
+        radial-gradient(circle at 85% 95%, rgba(30, 35, 25, 0.08) 0%, rgba(0, 0, 0, 0) 55%);
+    }
+
+    /* Анимация ветра (покачивание фоновых элементов) */
+    @keyframes gentle-sway {
+      0%, 100% { transform: rotate(-2.5deg) translateY(0) scale(var(--base-scale, 1)); }
+      50% { transform: rotate(2.5deg) translateY(-6px) scale(var(--base-scale, 1)); }
+    }
+    @keyframes gentle-sway-rev {
+      0%, 100% { transform: rotate(2deg) translateY(-4px) scale(var(--base-scale, 1)); }
+      50% { transform: rotate(-2deg) translateY(2px) scale(var(--base-scale, 1)); }
+    }
+    .sway-slow {
+      animation: gentle-sway 9s ease-in-out infinite;
+    }
+    .sway-slow-rev {
+      animation: gentle-sway-rev 11s ease-in-out infinite;
+    }
+
+    /* Интерактивные blobs на фоне */
+    .interactive-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+      transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.2, 1);
+    }
+
+    .envelope {
+      position: relative;
+      width: 340px;
+      height: 240px;
+      background-color: #FFFDF9; /* Clean ivory paper color */
+      border-radius: 4px 4px 12px 12px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      transition: transform 0.5s ease-in-out;
+    }
+    
+    /* Клапан конверта (верхний треугольник) */
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s;
+      z-index: 30;
+      will-change: transform;
+    }
+    
+    /* Открытое состояние клапана */
+    .open .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 10;
+    }
+    
+    /* Карточка с приглашением внутри */
+    .letter-card {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 320px;
+      height: 235px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.2), opacity 0.6s ease-in-out;
+      z-index: 15; /* Sits behind bottom pocket initially */
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      will-change: transform, opacity;
+      border: 1px solid #f5efe2;
+      opacity: 0; /* Полностью скрыто, пока письмо закрыто! */
+    }
+    
+    /* Карточка выезжает вверх и становится видимой */
+    .open .letter-card {
+      transform: translateY(-145px);
+      opacity: 1;
+      z-index: 25;
+    }
+    
+    /* Карман конверта (Svg) */
+    .envelope-pocket-svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 22;
+      pointer-events: none;
+    }
+ 
+    /* Восковая печать (wax seal) */
+    .wax-seal {
+      position: absolute;
+      top: 28px;
+      left: 78px;
+      width: 184px;
+      height: 184px;
+      cursor: pointer;
+      z-index: 40;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+    }
+    .wax-seal:hover {
+      transform: scale(1.08);
+    }
+    .wax-seal:active {
+      transform: scale(0.9);
+    }
+    
+    /* Исчезновение печати при открытии */
+    .open .wax-seal {
+      transform: translateY(30px) scale(0.5);
+      opacity: 0;
+      pointer-events: none;
+    }
+    /* Исчезновение подсказки при открытии */
+    .open .envelope-hint {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.8) translateY(-10px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+ 
+    /* Интеграция иллюстраций животных в общую палитру сафари (наложение текстуры бумаги с сочными цветами) */
+    #envelope-cover img[src^="assets/"]:not([src*="stamp"]),
+    #scroll-container img[src^="assets/"]:not([src*="stamp"]):not([src*="baby_photo"]) {
+      mix-blend-mode: multiply;
+      filter: sepia(0.15) saturate(1.1) contrast(0.96) brightness(1.02);
+      opacity: 0.96;
+      will-change: transform, filter;
+    }
+
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-safari-sage/20 selection:text-safari-text h-screen relative flex justify-center overflow-hidden">
+
+  <!-- Фоновая текстура бумаги для всего сайта -->
+  <div class="absolute inset-0 paper-overlay bg-repeat bg-center pointer-events-none z-0"></div>
+
+  <!-- СТАРТОВЫЙ ЭКРАН-ОБЛОЖКА (КОНВЕРТ) -->
+  <div id="envelope-cover" class="fixed inset-0 z-50 flex justify-center items-center transition-all duration-1000 ease-in-out overflow-hidden">
+    <!-- Фоновая бумага обложки с увеличенной непрозрачностью для текстурного эффекта -->
+    <div class="absolute inset-0 paper-overlay bg-repeat bg-center pointer-events-none z-0" style="opacity: 0.55; mix-blend-mode: multiply;"></div>
+    
+    <!-- Тени от листвы (Gobo-эффект) -->
+    <div class="absolute inset-0 pointer-events-none z-5" style="background-image: radial-gradient(circle at 95% 5%, rgba(42, 54, 33, 0.12) 0%, rgba(0, 0, 0, 0) 50%), radial-gradient(circle at 5% 45%, rgba(42, 54, 33, 0.1) 0%, rgba(0, 0, 0, 0) 40%), radial-gradient(circle at 85% 95%, rgba(30, 35, 25, 0.11) 0%, rgba(0, 0, 0, 0) 55%); mix-blend-mode: multiply;"></div>
+
+    <!-- Фоновая рамка -->
+    <div class="absolute bg-no-repeat bg-center pointer-events-none z-0" style="background-image: url('assets/Frame5.webp'); background-size: 100% 100%; top: -35px; bottom: 0; left: 0; right: 0;"></div>
+
+    <!-- 3D Конверт контейнер с текстовой кнопкой -->
+    <div class="envelope-container flex flex-col items-center space-y-8 z-30 relative scale-95 md:scale-100">
+      <div id="envelope" class="envelope">
+        
+        <!-- Карточка внутри конверта -->
+        <div class="letter-card">
+          <div class="w-16 h-16 relative">
+            <img src="assets/safari_animals.webp" alt="Звери" class="w-full h-full object-contain">
+          </div>
+          <div class="text-center">
+            <span class="text-safari-forest font-bold tracking-wider uppercase text-[12px] block">Приглашение</span>
+            <h1 class="font-serif text-2xl text-safari-text font-bold mt-0.5 leading-tight">Марселю <span class="text-[#E9A13B]">1</span> год</h1>
+            <p id="envelope-greeting-text" class="text-stone-700 text-[12px] max-w-[240px] mx-auto mt-1 leading-normal">
+              Вас ждут незабываемые приключения в мире диких джунглей!
+            </p>
+          </div>
+          <!-- Кнопка "Открыть" в стиле основных CTA кнопок -->
+          <button id="read-card-btn" class="px-6 py-1.5 bg-safari-forest text-white font-semibold rounded-full shadow-md hover:bg-safari-forest/90 hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out cursor-pointer text-[10px] tracking-wider uppercase mt-1.5">
+            Открыть
+          </button>
+        </div>
+
+        <!-- Верхний клапан (треугольник), складывается вниз -->
+        <div class="envelope-flap select-none pointer-events-none">
+          <svg viewBox="0 0 340 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-md">
+            <polygon points="0,0 340,0 170,120" fill="#FFFDF9"/>
+          </svg>
+        </div>
+
+        <!-- Карман конверта (боковые и нижний клапаны) -->
+        <svg class="envelope-pocket-svg" viewBox="0 0 340 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0 L170 120 L0 240 Z" fill="#FFFDF9"/>
+          <path d="M340 0 L170 120 L340 240 Z" fill="#FFFDF9"/>
+          <path d="M0 240 L170 110 L340 240 Z" fill="#F4F0E4"/>
+        </svg>
+
+        <!-- ДЕКОРАТИВНАЯ МАРКА (Клеится поверх правого клапана) -->
+        <div class="absolute top-3 right-3 w-12 h-14 rotate-6 shadow-md z-23 select-none pointer-events-none overflow-hidden rounded-sm bg-white p-0.5 border border-stone-200">
+          <img src="assets/safari_stamp.webp" alt="Марка" class="w-full h-full object-cover">
+        </div>
+        
+        <!-- ПОЧТОВЫЙ ШТЕМПЕЛЬ -->
+        <div class="absolute top-1 right-1 w-16 h-16 pointer-events-none opacity-40 z-24 select-none transform -rotate-12">
+          <svg viewBox="0 0 100 100" fill="none" class="text-stone-800 stroke-current">
+            <circle cx="50" cy="50" r="30" stroke-width="1.5" stroke-dasharray="8,4"/>
+            <path d="M20 40 Q40 30 60 40 T100 40" stroke-width="1.5"/>
+            <path d="M10 50 Q30 40 50 50 T90 50" stroke-width="1.5"/>
+            <path d="M0 60 Q20 50 40 60 T80 60" stroke-width="1.5"/>
+          </svg>
+        </div>
+
+
+
+        <!-- Подсказка над печатью -->
+        <div class="envelope-hint absolute top-[-48px] left-[50px] w-[240px] text-center text-safari-forest font-serif tracking-wider text-[18px] font-bold z-40 animate-custom-pulse pointer-events-none select-none">
+          ОТКРОЙ КОНВЕРТ
+        </div>
+
+        <!-- Восковая печать (Wax Seal Button) -->
+        <button id="open-envelope-btn" class="wax-seal" aria-label="Открыть письмо">
+          <img src="assets/Paw.webp" alt="Печать" class="w-full h-full object-contain select-none pointer-events-none">
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Ограничивающий snap-scroll контейнер для эффекта свайпов (Web Stories) -->
+  <!-- Изначально overflow-hidden, разблокируется скриптом при открытии конверта -->
+  <div id="scroll-container" class="w-full max-w-[640px] h-screen shadow-2xl relative z-10 overflow-x-hidden overflow-y-hidden snap-y snap-mandatory scroll-smooth">
+ 
+    <!-- Текстура бумаги внутри скролл-контейнера на все экраны -->
+    <div class="absolute inset-0 paper-overlay bg-repeat bg-center pointer-events-none z-0"></div>
+ 
+    <!-- ТЕНИ ОТ ЛИСТВЫ (GOBO-ЭФФЕКТ) - ЗАКРЕПЛЕНЫ СВЕРХУ ПРИ СКРОЛЛЕ -->
+    <div class="gobo-overlay"></div>
+ 
+  
+    <!-- ИНТЕРАКТИВНЫЕ BLOB-ФИГУРЫ НА ЗАДНЕМ ФОНЕ (СДВИГАЮТСЯ ОТ КУРСОРA) -->
+    <div id="interactive-blob-1" class="interactive-blob w-72 h-72 bg-[#F3A800]/25 top-[120vh] left-[-80px]"></div>
+    <div id="interactive-blob-2" class="interactive-blob w-80 h-80 bg-[#96D65E]/30 top-[170vh] right-[-100px]"></div>
+    <div id="interactive-blob-3" class="interactive-blob w-72 h-72 bg-[#FF8C00]/20 top-[220vh] left-[-60px]"></div>
+    <div id="interactive-blob-4" class="interactive-blob w-80 h-80 bg-[#5B995A]/30 top-[260vh] right-[-80px]"></div>
+ 
+    <!-- КНОПКА МУЗЫКИ -->
+    <button id="music-toggle" class="fixed top-6 right-6 md:absolute md:top-6 md:right-6 z-50 p-3 bg-white/80 backdrop-blur-md rounded-full shadow-lg border border-safari-gold/30 hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer" aria-label="Включить музыку">
+      <svg class="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+      </svg>
+    </button>
+ 
+    <!-- Разделитель над Экраном 1 -->
+    <div class="w-full h-[40px] md:h-[50px] relative z-30 pointer-events-none">
+      <img src="assets/zig.webp" alt="Разделитель" class="w-full h-full object-fill select-none pointer-events-none">
+    </div>
+
+    <!-- СЕКЦИЯ 1: HERO (ПЕРВЫЙ ЭКРАН) -->
+    <section class="active h-screen w-full snap-start snap-always shrink-0 relative overflow-hidden z-10">
+      <!-- Фоновая рамка (растянута 100% на 100%, чтобы не было отступов сверху/снизу и обрезки по бокам) -->
+      <div class="absolute inset-0 bg-no-repeat bg-center pointer-events-none z-0 lazy-bg" data-bg="assets/Frame1.webp" style="background-size: 100% 100%;"></div>
+
+      <!-- Контентная область с боковыми отступами и смещением вверх для предотвращения наложения на зверей снизу -->
+      <div class="relative z-10 w-full h-full flex flex-col justify-center items-center text-center px-12 pt-10 pb-6 transform -translate-y-6">
+        <!-- Заголовок приветствия -->
+        <span class="slide-fade-in delay-75 text-safari-forest font-bold tracking-[0.25em] uppercase text-[15px] mb-1 block">
+          Приглашение
+        </span>
+        
+        <!-- Имя гостя (персонализация) -->
+        <h2 id="guest-name" class="slide-fade-in delay-150 font-serif text-4xl md:text-5xl text-safari-text font-bold mb-1 tracking-wide">
+          Дорогие гости
+        </h2>
+        
+        <p id="guest-greeting-text" class="slide-fade-in delay-200 text-safari-text max-w-[300px] text-sm md:text-base mb-4 leading-relaxed">
+          Приглашаем вас в увлекательное путешествие по диким джунглям!
+        </p>
+   
+        <!-- Главное фото в арке -->
+        <div class="slide-zoom-in delay-300 relative w-44 h-56 mb-3 hover:scale-[1.03] transition-transform duration-500">
+          <!-- Фоновый декоративный круг -->
+          <div class="absolute inset-0 bg-safari-sand/30 rounded-full scale-105 -rotate-6 blur-md"></div>
+          
+          <!-- Рамка-арка -->
+          <div class="w-full h-full rounded-t-full border-[8px] border-white shadow-2xl overflow-hidden relative bg-stone-100">
+            <img data-src="assets/baby_photo.webp?v=2" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3C/svg%3E" alt="Марсель" class="w-full h-full object-cover lazy-img">
+          </div>
+        </div>
+   
+        <h1 class="slide-fade-in delay-400 font-serif text-[42px] md:text-[54px] text-safari-text mt-1 font-bold tracking-tight leading-tight">
+          Марселю <span class="text-[#E9A13B]">1 год</span>
+        </h1>
+        
+        <p class="slide-fade-in delay-500 font-serif text-xl text-stone-500 mt-0.5">
+          Wild One Birthday
+        </p>
+   
+        <!-- Кнопка CTA -->
+        <a href="#rsvp" class="slide-fade-in delay-500 mt-4 px-6 py-2.5 bg-safari-forest text-white font-semibold rounded-full shadow-lg shadow-safari-forest/30 hover:bg-safari-forest/90 hover:scale-105 active:scale-95 transition-all duration-200 ease-in-out cursor-pointer text-xs tracking-[0.02em] uppercase">
+          Подтвердить присутствие
+        </a>
+      </div>
+      
+    </section>
+ 
+    <!-- Разделитель между Экраном 1 и Экраном 2 -->
+    <div class="w-full h-[40px] md:h-[50px] relative z-30 pointer-events-none">
+      <img src="assets/zig.webp" alt="Разделитель" class="w-full h-full object-fill select-none pointer-events-none">
+    </div>
+ 
+    <!-- СЕКЦИЯ 2: ДЕТАЛИ МЕРОПРИЯТИЯ -->
+    <section class="h-screen w-full snap-start snap-always flex flex-col justify-center px-6 md:px-10 shrink-0 relative py-6 overflow-hidden bg-no-repeat bg-center z-10 lazy-bg" data-bg="assets/Frame2.webp" style="background-size: 100% 100%;">
+
+      <h3 class="slide-fade-in font-serif text-3xl md:text-4xl text-center font-bold text-safari-text mb-6">
+        Координаты экспедиции
+      </h3>
+
+      <div class="grid grid-cols-1 gap-4 max-w-md mx-auto w-full">
+        <!-- Календарь -->
+        <div class="slide-pop-in delay-100 w-full">
+          <div class="bg-white/70 backdrop-blur-sm py-4 pl-6 pr-4 md:py-5 md:pl-8 md:pr-5 rounded-2xl border border-safari-gold/30 flex items-center space-x-4 shadow-md hover:scale-[1.03] hover:-translate-y-1 hover:bg-white/80 hover:shadow-lg hover:border-safari-gold/50 transition-all duration-300 cursor-pointer">
+            <div class="p-2.5 bg-safari-sand/40 rounded-xl text-safari-terracotta shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="text-stone-500 text-xs uppercase tracking-wider block">Дата</span>
+              <span class="text-safari-text font-bold text-lg">Суббота, 15 августа 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Время -->
+        <div class="slide-pop-in delay-200 w-full">
+          <div class="bg-white/70 backdrop-blur-sm py-4 pl-6 pr-4 md:py-5 md:pl-8 md:pr-5 rounded-2xl border border-safari-gold/30 flex items-center space-x-4 shadow-md hover:scale-[1.03] hover:-translate-y-1 hover:bg-white/80 hover:shadow-lg hover:border-safari-gold/50 transition-all duration-300 cursor-pointer">
+            <div class="p-2.5 bg-safari-sand/40 rounded-xl text-safari-sage shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="text-stone-500 text-xs uppercase tracking-wider block">Время</span>
+              <span class="text-safari-text font-bold text-lg">Сбор гостей в 16:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Локация -->
+        <div class="slide-pop-in delay-300 w-full">
+          <div class="bg-white/70 backdrop-blur-sm py-4 pl-6 pr-4 md:py-5 md:pl-8 md:pr-5 rounded-2xl border border-safari-gold/30 flex items-center space-x-4 shadow-md hover:scale-[1.03] hover:-translate-y-1 hover:bg-white/80 hover:shadow-lg hover:border-safari-gold/50 transition-all duration-300 cursor-pointer">
+            <div class="p-2.5 bg-safari-sand/40 rounded-xl text-safari-darkSage shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <span class="text-stone-500 text-xs uppercase tracking-wider block">Место</span>
+              <span class="text-safari-text font-bold text-lg block leading-tight">Ресторан «The Forest»</span>
+              <span class="text-stone-600 text-sm">Лесной проспект, д. 45</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Разделитель между Экраном 2 и Экраном 3 -->
+    <div class="w-full h-[40px] md:h-[50px] relative z-30 pointer-events-none">
+      <img src="assets/zig.webp" alt="Разделитель" class="w-full h-full object-fill select-none pointer-events-none">
+    </div>
+
+    <!-- СЕКЦИЯ 3: RSVP АНКЕТА -->
+    <section id="rsvp" class="h-screen w-full snap-start snap-always flex flex-col justify-center items-center px-6 md:px-10 shrink-0 relative py-8 overflow-hidden bg-no-repeat bg-center z-10 lazy-bg" data-bg="assets/Frame3.webp" style="background-size: 100% 100%;">
+      
+      <div class="w-full max-w-sm">
+        <!-- КОНТЕЙНЕР ДЛЯ ОТОБРАЖЕНИЯ СТАТУСА (ЕСЛИ УЖЕ ОТВЕТИЛ) -->
+        <div id="rsvp-status-container" class="slide-pop-in hidden bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-safari-gold/30 shadow-md text-center max-w-sm mx-auto">
+          <span class="slide-fade-in delay-75 text-3xl block mb-2">🦁</span>
+          <h4 id="status-summary-title" class="slide-fade-in delay-100 font-serif text-2xl font-bold text-safari-text mb-2">
+            Вы успешно ответили!
+          </h4>
+          <div id="status-summary-details" class="slide-fade-in delay-150 text-stone-600 text-xs md:text-sm leading-relaxed mb-4 space-y-1">
+            <!-- Сюда подставится отчет -->
+          </div>
+          
+          <div class="slide-fade-in delay-200 border-t border-stone-200 pt-4">
+            <p id="edit-deadline-info" class="text-stone-500 text-[10px] mb-3">
+              Изменение ответа доступно до 5 августа 2026.
+            </p>
+            <button id="edit-rsvp-btn" class="px-5 py-1.5 border border-safari-forest text-safari-forest hover:bg-safari-forest hover:text-white rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer">
+              Изменить ответ
+            </button>
+          </div>
+        </div>
+
+        <!-- КОНТЕЙНЕР ДЛЯ ФОРМЫ (ЕСЛИ ЕЩЕ НЕ ОТВЕТИЛ ИЛИ ИЗМЕНЯЕТ) -->
+        <div id="rsvp-form-container" class="slide-pop-in bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-safari-gold/30 shadow-md max-w-sm mx-auto w-full relative">
+
+          <h3 class="slide-fade-in delay-75 font-serif text-2xl text-center font-bold text-safari-text mb-1">
+            Подтверждение
+          </h3>
+          <p class="slide-fade-in delay-100 text-center text-xs text-stone-500 mb-4 uppercase tracking-wider">
+            Пожалуйста, ответьте до 5 августа 2026
+          </p>
+
+          <form id="rsvp-form" class="space-y-4">
+            <!-- Поле: Имя -->
+            <div class="slide-fade-in delay-150">
+              <label for="name-input" class="block text-xs font-medium text-stone-500 uppercase tracking-wider mb-1.5">Ваше имя и фамилия</label>
+              <input type="text" id="name-input" required class="w-full px-3 py-2.5 rounded-xl border border-stone-300 bg-white/50 focus:border-safari-sage focus:ring-2 focus:ring-safari-sage/20 focus:outline-none transition-colors duration-200 text-stone-800 text-base" placeholder="Иван и Мария">
+            </div>
+
+            <!-- Поле: Присутствие (Radio) -->
+            <div class="slide-fade-in delay-200">
+              <span class="block text-xs font-medium text-stone-500 uppercase tracking-wider mb-1.5">Сможете ли вы прийти?</span>
+              <div class="grid grid-cols-2 gap-3">
+                <!-- Да -->
+                <label class="cursor-pointer">
+                  <input type="radio" name="attending" id="status-yes" value="yes" checked class="sr-only peer">
+                  <div class="py-2.5 text-center rounded-xl border border-stone-300 bg-white/50 peer-checked:bg-safari-sage/10 peer-checked:border-safari-sage peer-checked:text-safari-forest font-bold text-base transition-all duration-200">
+                    Да, с радостью!
+                  </div>
+                </label>
+                <!-- Нет -->
+                <label class="cursor-pointer">
+                  <input type="radio" name="attending" id="status-no" value="no" class="sr-only peer">
+                  <div class="py-2.5 text-center rounded-xl border border-stone-300 bg-white/50 peer-checked:bg-red-50 peer-checked:border-red-300 peer-checked:text-red-700 font-bold text-base transition-all duration-200">
+                    Не смогу
+                  </div>
+                </label>
+              </div>
+            </div>
+
+
+
+            <!-- Кнопка отправки -->
+            <button type="submit" class="slide-fade-in delay-300 w-full py-3 bg-safari-forest text-white font-bold rounded-full shadow-md hover:bg-safari-forest/95 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 cursor-pointer text-sm tracking-wider uppercase">
+              Отправить ответ
+            </button>
+          </form>
+        </div>
+
+        <!-- ПОДВАЛ (Теперь прямо под формой) -->
+        <footer class="slide-fade-in delay-400 text-center pt-6 flex flex-col items-center justify-center shrink-0">
+          <img src="assets/Paws1.webp" alt="Лапки" class="h-4 w-auto mb-1.5 object-contain select-none pointer-events-none">
+          <p class="text-stone-400 text-[10px] mt-1 hidden md:block">Марселю 1 год © 2026</p>
+        </footer>
+      </div>
+
+    </section>
+
+    <!-- Разделитель под Экраном 3 -->
+    <div class="w-full h-[40px] md:h-[50px] relative z-30 pointer-events-none">
+      <img src="assets/zig.webp" alt="Разделитель" class="w-full h-full object-fill select-none pointer-events-none">
+    </div>
+
+  </div>
+
+  <!-- TOAST УВЕДОМЛЕНИЕ -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full text-white bg-emerald-600 shadow-lg text-sm md:text-base font-semibold z-50 transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none text-center">
+    Ответ сохранен!
+  </div>
+
+  <!-- Client App Logic -->
+  <script src="app.js?v=20260609"></script>
+</body>
+</html>
