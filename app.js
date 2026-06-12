@@ -272,7 +272,7 @@ function setupPersonalization() {
   } else {
     // По умолчанию для общих приглашений
     if (greetingNameElement) {
-      greetingNameElement.textContent = 'Дорогие гости';
+      greetingNameElement.textContent = 'Дорогие друзья';
     }
     if (greetingTextElement) {
       greetingTextElement.textContent = 'Приглашаем вас в увлекательное путешествие по диким джунглям!';
