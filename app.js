@@ -290,7 +290,6 @@ function setupRSVPForm() {
   if (ctaBtn) {
     ctaBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      try { playClickSound(); } catch (err) {}
       const rsvpSection = document.getElementById('rsvp');
       if (rsvpSection) {
         rsvpSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
