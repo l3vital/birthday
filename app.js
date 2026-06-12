@@ -285,6 +285,19 @@ function setupPersonalization() {
 
 // --- RSVP ФОРМА И LOCALSTORAGE ---
 function setupRSVPForm() {
+  // Настройка плавной прокрутки кнопки CTA без смены хэша (предотвращает остановку музыки на iOS)
+  const ctaBtn = document.getElementById('cta-confirm-btn');
+  if (ctaBtn) {
+    ctaBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      try { playClickSound(); } catch (err) {}
+      const rsvpSection = document.getElementById('rsvp');
+      if (rsvpSection) {
+        rsvpSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
   const rsvpForm = document.getElementById('rsvp-form');
   const statusContainer = document.getElementById('rsvp-status-container');
   const formContainer = document.getElementById('rsvp-form-container');
